@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,17 +22,14 @@ public class GeneratePlanController {
     CalculatePaymentsPlanService calculatePaymentService;
 
     @PostMapping("/generate-plan")
-    public List<Payment> generatePlan(@Valid @RequestBody LoanDetails loanDetails){
+    public List<Payment> generatePlan(@Valid @RequestBody final LoanDetails loanDetails){
 
-        List<Payment> payments = new ArrayList<>();
-
-
+        final List<Payment> payments = new ArrayList<>();
         BigDecimal initialOutstandingPrincipal = loanDetails.getLoanAmount();
-        BigDecimal nominalRate = loanDetails.getNominalRate();
-        Integer duration = loanDetails.getDuration();
+        final BigDecimal nominalRate = loanDetails.getNominalRate();
+        final Integer duration = loanDetails.getDuration();
 
         BigDecimal annuity = calculatePaymentService.calculateAnnuity(initialOutstandingPrincipal, nominalRate, duration);
-
 
         for(long i=0; i < loanDetails.getDuration(); i++){
 

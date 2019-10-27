@@ -48,8 +48,5 @@ public class GeneratePlanControllerRestTemplateTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         JSONAssert.assertEquals(expectedJson, response.getBody(), false);
-
-        //verify(mockRepository, times(0)).save(any(Book.class));
-
     }
 }
