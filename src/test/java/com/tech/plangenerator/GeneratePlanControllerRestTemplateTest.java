@@ -38,14 +38,31 @@ public class GeneratePlanControllerRestTemplateTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(loanDetailsInJson, headers);
-
         ResponseEntity<String> response = restTemplate.exchange("/generate-plan", HttpMethod.POST, entity, String.class);
-
         String expectedJson;
         InputStream in =  this.getClass().getClassLoader().getResourceAsStream("defaultResponse.json");
-
         expectedJson = IOUtils.toString(in, "UTF-8");
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        JSONAssert.assertEquals(expectedJson, response.getBody(), false);
+    }
 
+    @Test
+    public void postValidPayloadWithDecimals() throws JSONException, IOException {
+
+        String loanDetailsInJson = "{\n" +
+                "\"loanAmount\": \"5000.75\",\n" +
+                "\"nominalRate\": \"5.89\",\n" +
+                "\"duration\": 24,\n" +
+                "\"startDate\": \"2018-01-01T00:00:01Z\"\n" +
+                "}";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<>(loanDetailsInJson, headers);
+        ResponseEntity<String> response = restTemplate.exchange("/generate-plan", HttpMethod.POST, entity, String.class);
+        String expectedJson;
+        InputStream in =  this.getClass().getClassLoader().getResourceAsStream("responseDecimals.json");
+        expectedJson = IOUtils.toString(in, "UTF-8");
         assertEquals(HttpStatus.OK, response.getStatusCode());
         JSONAssert.assertEquals(expectedJson, response.getBody(), false);
     }

@@ -68,9 +68,7 @@ class PlanGeneratorApplicationTests {
 		Integer period = new Integer(24);
 
 		BigDecimal expectedAnnuity = new BigDecimal(219.36).setScale( 2, RoundingMode.HALF_EVEN);
-
 		BigDecimal annuity = calculatePaymentsPlanService.calculateAnnuity(pv, rate, period);
-
 		assertEquals(expectedAnnuity, annuity);
 	}
 
@@ -81,9 +79,7 @@ class PlanGeneratorApplicationTests {
 		Integer period = new Integer(24);
 
 		BigDecimal expectedAnnuity = new BigDecimal(342.64).setScale( 2, RoundingMode.HALF_EVEN);
-
 		BigDecimal annuity = calculatePaymentsPlanService.calculateAnnuity(pv, rate, period);
-
 		assertEquals(expectedAnnuity, annuity);
 	}
 
@@ -94,9 +90,7 @@ class PlanGeneratorApplicationTests {
 		Integer period = new Integer(36);
 
 		BigDecimal expectedAnnuity = new BigDecimal(241.64).setScale( 2, RoundingMode.HALF_EVEN);
-
 		BigDecimal annuity = calculatePaymentsPlanService.calculateAnnuity(pv, rate, period);
-
 		assertEquals(expectedAnnuity, annuity);
 	}
 
@@ -104,7 +98,7 @@ class PlanGeneratorApplicationTests {
 	void calculateAnnuityWith(){
 		BigDecimal pv = new BigDecimal(7500.60);
 		BigDecimal rate = new BigDecimal(9.89);
-		Integer period = new Integer(36);
+		Integer period = 36;
 
 		BigDecimal expectedAnnuity = new BigDecimal(241.64).setScale( 2, RoundingMode.HALF_EVEN);
 		BigDecimal annuity = calculatePaymentsPlanService.calculateAnnuity(pv, rate, period);
@@ -115,7 +109,7 @@ class PlanGeneratorApplicationTests {
 	void calculateAnnuityWithPVZeroOrNegative(){
 		final BigDecimal pv = new BigDecimal(0);
 		final BigDecimal rate = new BigDecimal(2);
-		final Integer period = new Integer(12);
+		final Integer period = 12;
 
 		assertThrows(InvalidParameterException.class, () -> {
 			BigDecimal annuity = calculatePaymentsPlanService.calculateAnnuity(pv, rate, period);
@@ -147,13 +141,13 @@ class PlanGeneratorApplicationTests {
 	void calculateAnnuityWithPeriodZeroOrNegative(){
 		final BigDecimal pv = new BigDecimal(1000);
 		final BigDecimal rate = new BigDecimal(2);
-		final Integer period = new Integer(0);
+		final Integer period = 0;
 
 		assertThrows(InvalidParameterException.class, () -> {
 			BigDecimal annuity = calculatePaymentsPlanService.calculateAnnuity(pv, rate, period);
 		});
 
-		final Integer periodNegative = new Integer(-3);
+		final Integer periodNegative = -3;
 		assertThrows(InvalidParameterException.class, () -> {
 			BigDecimal annuity = calculatePaymentsPlanService.calculateAnnuity(pv, rate, periodNegative);
 		});

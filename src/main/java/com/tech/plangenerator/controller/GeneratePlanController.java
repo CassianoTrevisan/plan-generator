@@ -3,6 +3,8 @@ package com.tech.plangenerator.controller;
 import com.tech.plangenerator.model.LoanDetails;
 import com.tech.plangenerator.model.Payment;
 import com.tech.plangenerator.service.CalculatePaymentsPlanService;
+import com.tech.plangenerator.util.Constants;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +23,11 @@ public class GeneratePlanController {
     private
     CalculatePaymentsPlanService calculatePaymentService;
 
+    /**
+     * Endpoint which receives the arguments to generate the payment plan
+     * @param loanDetails
+     * @return JSON of each installment
+     */
     @PostMapping("/generate-plan")
     public List<Payment> generatePlan(@Valid @RequestBody final LoanDetails loanDetails){
 
@@ -34,7 +41,6 @@ public class GeneratePlanController {
         for(long i=0; i < loanDetails.getDuration(); i++){
 
             Payment newPayment = new Payment();
-
             newPayment.setBorrowerPaymentAmount(annuity.toString());
             newPayment.setDate(loanDetails.getStartDate().plusMonths(i).toString());
             newPayment.setInitialOutstandingPrincipal(initialOutstandingPrincipal.toString());
@@ -45,14 +51,12 @@ public class GeneratePlanController {
 
             BigDecimal principal = calculatePaymentService.calculatePrincipal(annuity, interest);
             newPayment.setPrincipal(principal.toString());
-
             BigDecimal remainingOutstandingPrincipal;
-
             remainingOutstandingPrincipal = calculatePaymentService.calculateRemainingOutstandingPrincipal(initialOutstandingPrincipal, principal);
 
             //if last iteration and remainingOutstandingPrincipal is less than 0
-            if(i == loanDetails.getDuration()-1 && remainingOutstandingPrincipal.compareTo(new BigDecimal(0)) < 0){
-                annuity = initialOutstandingPrincipal.add(interest).round(MathContext.DECIMAL32).setScale(2);
+            if(i == loanDetails.getDuration()-1 && remainingOutstandingPrincipal.compareTo(Constants.ZERO) < NumberUtils.INTEGER_ZERO){
+                annuity = initialOutstandingPrincipal.add(interest).round(MathContext.DECIMAL32).setScale(NumberUtils.INTEGER_TWO);
                 principal = calculatePaymentService.calculatePrincipal(annuity, interest);
                 remainingOutstandingPrincipal = calculatePaymentService.calculateRemainingOutstandingPrincipal(initialOutstandingPrincipal, principal);
                 newPayment.setPrincipal(principal.toString());
@@ -62,7 +66,6 @@ public class GeneratePlanController {
             newPayment.setRemainingOutstandingPrincipal(remainingOutstandingPrincipal.toString());
             payments.add(newPayment);
             initialOutstandingPrincipal = remainingOutstandingPrincipal;
-
         }
         return payments;
     }
